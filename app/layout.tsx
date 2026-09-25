@@ -23,6 +23,8 @@ export const viewport: Viewport = {
   themeColor: "#161826",
   colorScheme: "dark",
   viewportFit: "cover",
+  // Sem isso o iOS dá zoom ao focar campos com fonte < 16px (o design usa 14–15px).
+  maximumScale: 1,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
