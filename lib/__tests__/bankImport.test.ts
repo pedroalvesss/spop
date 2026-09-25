@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pickCategory, toImported, type PluggyTransaction } from "../bankImport";
+import { pickCategory, syncedLabel, toImported, type PluggyTransaction } from "../bankImport";
 
 const tx = (over: Partial<PluggyTransaction>): PluggyTransaction => ({
   id: "p1",
@@ -67,5 +67,16 @@ describe("pickCategory", () => {
 
   it("só usa regra cuja categoria existe no tipo certo", () => {
     expect(pickCategory({ hint: "Salary", amountCents: -1 }, categories)).toBe("outros");
+  });
+});
+
+describe("syncedLabel", () => {
+  const now = new Date("2026-09-25T18:00:00Z");
+  it("hoje ou dia anterior no horário de São Paulo", () => {
+    expect(syncedLabel(new Date("2026-09-25T11:12:00Z"), now)).toBe("Atualizado hoje às 08:12");
+    expect(syncedLabel(new Date("2026-09-25T02:00:00Z"), now)).toBe(
+      "Atualizado em 24 set às 23:00",
+    );
+    expect(syncedLabel(null, now)).toBe("Ainda não sincronizou");
   });
 });

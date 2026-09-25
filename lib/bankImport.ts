@@ -1,4 +1,4 @@
-import { todayISO } from "@/lib/dates";
+import { shortDate, TIMEZONE, todayISO } from "@/lib/dates";
 
 // Campos de GET /v2/transactions da Pluggy que o SPOP usa.
 export interface PluggyTransaction {
@@ -86,4 +86,18 @@ export function pickCategory(
   const byName = (name: string) => ofType.find((c) => c.name === name)?.id;
   const rule = CATEGORY_RULES.find(([re, name]) => re.test(t.hint) && byName(name));
   return (rule && byName(rule[1])) ?? byName(FALLBACK[type]) ?? ofType[0]?.id;
+}
+
+// "Atualizado hoje às 08:12" / "Atualizado em 24 set às 08:12", no horário de São Paulo.
+export function syncedLabel(syncedAt: Date | null, now = new Date()) {
+  if (!syncedAt) return "Ainda não sincronizou";
+  const time = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: TIMEZONE,
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(syncedAt);
+  const day = todayISO(syncedAt);
+  return day === todayISO(now)
+    ? `Atualizado hoje às ${time}`
+    : `Atualizado em ${shortDate(day)} às ${time}`;
 }
