@@ -29,9 +29,7 @@ describe("LoginForm", () => {
   it("reclama de e-mail inválido sem chamar o servidor", async () => {
     render(<LoginForm />);
     await fillAndSubmit("pedro", "123456");
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Esse e-mail não parece um e-mail.",
-    );
+    expect(await screen.findByRole("alert")).toHaveTextContent("Esse e-mail não parece um e-mail.");
     expect(postLogin).not.toHaveBeenCalled();
   });
 
@@ -61,29 +59,18 @@ describe("LoginForm", () => {
 
   it("esqueci a senha pede o e-mail antes de enviar o link", async () => {
     render(<LoginForm />);
-    await userEvent.click(
-      screen.getByRole("button", { name: "Esqueci a senha" }),
-    );
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Esse e-mail não parece um e-mail.",
-    );
+    await userEvent.click(screen.getByRole("button", { name: "Esqueci a senha" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Esse e-mail não parece um e-mail.");
     await userEvent.type(screen.getByLabelText("E-mail"), "pedro@email.com");
-    await userEvent.click(
-      screen.getByRole("button", { name: "Esqueci a senha" }),
-    );
+    await userEvent.click(screen.getByRole("button", { name: "Esqueci a senha" }));
     expect(postForgotPassword).toHaveBeenCalledWith({
       email: "pedro@email.com",
     });
-    expect(toast).toHaveBeenCalledWith(
-      "Link enviado pro seu e-mail. Anota a senha dessa vez.",
-    );
+    expect(toast).toHaveBeenCalledWith("Link enviado pro seu e-mail. Anota a senha dessa vez.");
   });
 
   it("leva pro cadastro", () => {
     render(<LoginForm />);
-    expect(screen.getByRole("link", { name: "Criar conta" })).toHaveAttribute(
-      "href",
-      "/registro",
-    );
+    expect(screen.getByRole("link", { name: "Criar conta" })).toHaveAttribute("href", "/registro");
   });
 });

@@ -6,9 +6,7 @@ import { Switch } from "../switch";
 describe("Switch", () => {
   it("alterna e avisa o novo estado", async () => {
     const handleChange = vi.fn();
-    render(
-      <Switch aria-label="Esconder valores" onCheckedChange={handleChange} />,
-    );
+    render(<Switch aria-label="Esconder valores" onCheckedChange={handleChange} />);
     const sw = screen.getByRole("switch", { name: "Esconder valores" });
     expect(sw).toHaveAttribute("data-state", "unchecked");
     await userEvent.click(sw);

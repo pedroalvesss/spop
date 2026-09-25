@@ -15,14 +15,10 @@ export function RouteError({ error, retry }: RouteErrorProps) {
   }, [error]);
 
   return (
-    <div className="bg-surface flex flex-col items-center gap-3 rounded-2xl p-7 text-center text-sm text-neutral-400">
-      <WarningCircle className="text-expense text-[28px]" />
+    <div className="flex flex-col items-center gap-3 rounded-2xl bg-surface p-7 text-center text-sm text-neutral-400">
+      <WarningCircle className="text-[28px] text-expense" />
       Não deu pra carregar essa tela.
-      <Button
-        variant="secondary"
-        className="min-h-11 rounded-xl"
-        onClick={retry}
-      >
+      <Button variant="secondary" className="min-h-11 rounded-xl" onClick={retry}>
         Tentar de novo
       </Button>
     </div>

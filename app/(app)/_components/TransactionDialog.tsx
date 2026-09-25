@@ -55,7 +55,7 @@ export function TransactionDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         aria-describedby={undefined}
-        className="pc:max-w-[460px] px-[18px] pt-[18px] shadow-lg"
+        className="px-[18px] pt-[18px] shadow-lg pc:max-w-[460px]"
       >
         <form noValidate onSubmit={submit} className="contents">
           <div className="flex items-center justify-between">
@@ -92,7 +92,7 @@ export function TransactionDialog({
             <Button
               type="button"
               variant="ghost"
-              className="text-expense self-center text-[13px]"
+              className="self-center text-[13px] text-expense"
               onClick={removeTransaction}
             >
               Excluir lançamento

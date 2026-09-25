@@ -10,7 +10,7 @@ export function IconBox({ icon, className }: IconBoxProps) {
   return (
     <div
       className={cn(
-        "bg-bg grid size-[38px] shrink-0 place-items-center rounded-[10px] text-lg text-neutral-300",
+        "grid size-[38px] shrink-0 place-items-center rounded-[10px] bg-bg text-lg text-neutral-300",
         className,
       )}
     >

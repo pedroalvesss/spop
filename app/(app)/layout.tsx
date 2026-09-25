@@ -26,7 +26,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
         <div className="flex min-h-dvh">
           <Sidebar userName={user.name} modules={user.modules} />
           <main className="min-w-0 flex-1">
-            <div className="pc:px-8 pc:pt-7 pc:pb-12 mx-auto flex max-w-[1180px] flex-col gap-[18px] px-4 pt-[max(14px,env(safe-area-inset-top))] pb-[120px]">
+            <div className="mx-auto flex max-w-[1180px] flex-col gap-[18px] px-4 pt-[max(14px,env(safe-area-inset-top))] pb-[120px] pc:px-8 pc:pt-7 pc:pb-12">
               <AppHeader userName={user.name} homeSub={homeSub} />
               {children}
             </div>

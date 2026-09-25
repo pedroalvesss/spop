@@ -6,7 +6,7 @@ type CardProps = React.ComponentProps<"div">;
 
 // Superfície, raio 16, sem borda. Padding 16 por padrão; o card principal da aba usa 20.
 export function Card({ className, ...props }: CardProps) {
-  return <div className={cn("bg-surface flex flex-col rounded-2xl p-4", className)} {...props} />;
+  return <div className={cn("flex flex-col rounded-2xl bg-surface p-4", className)} {...props} />;
 }
 
 interface CardHeaderProps {

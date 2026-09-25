@@ -21,7 +21,7 @@ export function AmountField({ field, income }: AmountFieldProps) {
           autoComplete="off"
           placeholder="0,00"
           className={cn(
-            "caret-accent w-[200px] bg-transparent text-center text-[44px] font-medium tracking-[-0.03em] outline-none focus-visible:outline-none",
+            "w-[200px] bg-transparent text-center text-[44px] font-medium tracking-[-0.03em] caret-accent outline-none focus-visible:outline-none",
             income ? "text-income" : "text-text",
           )}
           {...field}

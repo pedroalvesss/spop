@@ -13,20 +13,12 @@ vi.mock("@/actions/authActions/postRegister", () => ({
   postRegister: (d: unknown) => postRegister(d),
 }));
 
-async function fill(
-  name: string,
-  email: string,
-  password: string,
-  confirm: string,
-) {
+async function fill(name: string, email: string, password: string, confirm: string) {
   if (name) await userEvent.type(screen.getByLabelText("Como te chamo?"), name);
   if (email) await userEvent.type(screen.getByLabelText("E-mail"), email);
   if (password) await userEvent.type(screen.getByLabelText("Senha"), password);
-  if (confirm)
-    await userEvent.type(screen.getByLabelText("Confirmar senha"), confirm);
-  await userEvent.click(
-    screen.getByRole("button", { name: "Começar a organizar" }),
-  );
+  if (confirm) await userEvent.type(screen.getByLabelText("Confirmar senha"), confirm);
+  await userEvent.click(screen.getByRole("button", { name: "Começar a organizar" }));
 }
 
 describe("RegisterForm", () => {
@@ -35,17 +27,13 @@ describe("RegisterForm", () => {
   it("mostra um erro por vez, na ordem dos campos", async () => {
     render(<RegisterForm />);
     await fill("", "pedro", "123", "321");
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Faltou o nome.",
-    );
+    expect(await screen.findByRole("alert")).toHaveTextContent("Faltou o nome.");
   });
 
   it("confere se as senhas batem", async () => {
     render(<RegisterForm />);
     await fill("Pedro", "p@e.com", "123456", "654321");
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "As senhas não batem.",
-    );
+    expect(await screen.findByRole("alert")).toHaveTextContent("As senhas não batem.");
     expect(postRegister).not.toHaveBeenCalled();
   });
 
@@ -60,9 +48,7 @@ describe("RegisterForm", () => {
     postRegister.mockResolvedValue({ ok: true, name: "Pedro" });
     render(<RegisterForm />);
     await fill("Pedro", "p@e.com", "123456", "123456");
-    expect(toast).toHaveBeenCalledWith(
-      "Conta criada. Bem-vindo à pobreza organizada.",
-    );
+    expect(toast).toHaveBeenCalledWith("Conta criada. Bem-vindo à pobreza organizada.");
     expect(router.replace).toHaveBeenCalledWith("/");
   });
 
@@ -73,8 +59,6 @@ describe("RegisterForm", () => {
     });
     render(<RegisterForm />);
     await fill("Pedro", "p@e.com", "123456", "123456");
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Esse e-mail já tem conta.",
-    );
+    expect(await screen.findByRole("alert")).toHaveTextContent("Esse e-mail já tem conta.");
   });
 });

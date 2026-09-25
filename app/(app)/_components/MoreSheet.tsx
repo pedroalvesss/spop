@@ -31,9 +31,9 @@ export function MoreSheet({ tabs, open, onOpenChange }: MoreSheetProps) {
               key={tab.id}
               href={tab.href}
               onClick={handleClickItemLink}
-              className="bg-bg active:bg-accent-900 flex flex-col items-center gap-2 rounded-[14px] px-1.5 py-3.5 text-center text-xs"
+              className="flex flex-col items-center gap-2 rounded-[14px] bg-bg px-1.5 py-3.5 text-center text-xs active:bg-accent-900"
             >
-              <Icon name={tab.icon} className="text-accent text-2xl" />
+              <Icon name={tab.icon} className="text-2xl text-accent" />
               {tab.name}
             </Link>
           ))}

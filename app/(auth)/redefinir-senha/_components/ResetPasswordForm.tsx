@@ -10,10 +10,7 @@ import { useToast } from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import { TALL_FIELD } from "@/components/ui/input";
 import { useFormError } from "@/hooks/useFormError";
-import {
-  resetPasswordSchema,
-  type ResetPasswordInput,
-} from "@/lib/schemas/auth";
+import { resetPasswordSchema, type ResetPasswordInput } from "@/lib/schemas/auth";
 
 interface ResetPasswordFormProps {
   token: string;
@@ -26,10 +23,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: { token, password: "", confirmPassword: "" },
   });
-  const { error, setServerError } = useFormError(form, [
-    "password",
-    "confirmPassword",
-  ]);
+  const { error, setServerError } = useFormError(form, ["password", "confirmPassword"]);
   const { register, handleSubmit, control, formState } = form;
   const password = useWatch({ control, name: "password" });
 
@@ -41,11 +35,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   }
 
   return (
-    <form
-      noValidate
-      onSubmit={handleSubmit(handleSubmitForm)}
-      className="flex flex-col gap-3.5"
-    >
+    <form noValidate onSubmit={handleSubmit(handleSubmitForm)} className="flex flex-col gap-3.5">
       <PasswordFields
         label="Nova senha"
         passwordField={register("password")}
@@ -53,11 +43,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         password={password}
       />
       <FormError message={error} />
-      <Button
-        type="submit"
-        disabled={formState.isSubmitting}
-        className={TALL_FIELD}
-      >
+      <Button type="submit" disabled={formState.isSubmitting} className={TALL_FIELD}>
         Salvar senha
       </Button>
     </form>

@@ -40,11 +40,7 @@ export function LoginForm() {
 
   return (
     <>
-      <form
-        noValidate
-        onSubmit={handleSubmit(handleSubmitForm)}
-        className="flex flex-col gap-3.5"
-      >
+      <form noValidate onSubmit={handleSubmit(handleSubmitForm)} className="flex flex-col gap-3.5">
         <div>
           <Label htmlFor="email">E-mail</Label>
           <Input
@@ -68,11 +64,7 @@ export function LoginForm() {
           />
         </div>
         <FormError message={error} />
-        <Button
-          type="submit"
-          disabled={formState.isSubmitting}
-          className={TALL_FIELD}
-        >
+        <Button type="submit" disabled={formState.isSubmitting} className={TALL_FIELD}>
           Entrar
         </Button>
         <Button

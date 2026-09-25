@@ -22,7 +22,7 @@ export function Sidebar({ userName, modules }: SidebarProps) {
   const { openNew } = useTransactionDialog();
 
   return (
-    <aside className="pc:flex sticky top-0 hidden h-dvh w-[236px] shrink-0 scrollbar-none flex-col gap-[22px] overflow-auto bg-[color-mix(in_srgb,var(--color-surface)_45%,var(--color-bg))] px-3.5 py-[22px]">
+    <aside className="sticky top-0 scrollbar-none hidden h-dvh w-[236px] shrink-0 flex-col gap-[22px] overflow-auto bg-[color-mix(in_srgb,var(--color-surface)_45%,var(--color-bg))] px-3.5 py-[22px] pc:flex">
       <div className="px-2">
         <Logo size="md" />
       </div>
@@ -40,7 +40,7 @@ export function Sidebar({ userName, modules }: SidebarProps) {
               "flex items-center gap-2.5 rounded-[9px] px-2.5 py-2 text-sm transition-colors",
               tab.id === active
                 ? "bg-accent-900 text-accent-200"
-                : "hover:bg-text/6 text-neutral-300",
+                : "text-neutral-300 hover:bg-text/6",
             )}
           >
             <Icon name={tab.icon} className="text-lg" />
@@ -49,7 +49,7 @@ export function Sidebar({ userName, modules }: SidebarProps) {
         ))}
       </nav>
       <div className="mt-auto flex items-center gap-2.5 p-2">
-        <div className="bg-accent-800 text-accent-200 grid size-8 shrink-0 place-items-center rounded-full text-[13px] font-semibold">
+        <div className="grid size-8 shrink-0 place-items-center rounded-full bg-accent-800 text-[13px] font-semibold text-accent-200">
           {userName.charAt(0).toUpperCase()}
         </div>
         <div className="min-w-0 flex-1">

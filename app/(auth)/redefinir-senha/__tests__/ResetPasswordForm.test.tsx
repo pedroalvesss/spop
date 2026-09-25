@@ -18,10 +18,7 @@ describe("ResetPasswordForm", () => {
     postResetPassword.mockResolvedValue({ ok: true });
     render(<ResetPasswordForm token="abc" />);
     await userEvent.type(screen.getByLabelText("Nova senha"), "novasenha1");
-    await userEvent.type(
-      screen.getByLabelText("Confirmar senha"),
-      "novasenha1",
-    );
+    await userEvent.type(screen.getByLabelText("Confirmar senha"), "novasenha1");
     await userEvent.click(screen.getByRole("button", { name: "Salvar senha" }));
     expect(postResetPassword).toHaveBeenCalledWith({
       token: "abc",
@@ -40,8 +37,6 @@ describe("ResetPasswordForm", () => {
     await userEvent.type(screen.getByLabelText("Nova senha"), "123456");
     await userEvent.type(screen.getByLabelText("Confirmar senha"), "123456");
     await userEvent.click(screen.getByRole("button", { name: "Salvar senha" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Esse link expirou.",
-    );
+    expect(await screen.findByRole("alert")).toHaveTextContent("Esse link expirou.");
   });
 });

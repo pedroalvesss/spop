@@ -8,11 +8,7 @@ interface BackLinkProps {
 
 export function BackLink({ href }: BackLinkProps) {
   return (
-    <Button
-      variant="ghost"
-      asChild
-      className="self-start text-sm text-neutral-300"
-    >
+    <Button variant="ghost" asChild className="self-start text-sm text-neutral-300">
       <Link href={href}>
         <CaretLeft />
         Voltar

@@ -4,9 +4,7 @@ import { ResetPasswordForm } from "./_components/ResetPasswordForm";
 
 export const metadata: Metadata = { title: "Nova senha · SPOP!" };
 
-export default async function ResetPasswordPage({
-  searchParams,
-}: PageProps<"/redefinir-senha">) {
+export default async function ResetPasswordPage({ searchParams }: PageProps<"/redefinir-senha">) {
   const { token } = await searchParams;
   return (
     <div className="flex flex-col gap-6">

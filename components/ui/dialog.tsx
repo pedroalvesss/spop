@@ -17,10 +17,10 @@ type DialogContentProps = React.ComponentProps<typeof DialogPrimitive.Content>;
 function DialogContent({ className, children, ...props }: DialogContentProps) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="animate-fade-in pc:justify-center fixed inset-0 z-50 flex flex-col items-center justify-end bg-neutral-900/60">
+      <DialogPrimitive.Overlay className="fixed inset-0 z-50 flex animate-fade-in flex-col items-center justify-end bg-neutral-900/60 pc:justify-center">
         <DialogPrimitive.Content
           className={cn(
-            "animate-sheet-in bg-surface pc:rounded-[18px] flex max-h-[92dvh] w-full scrollbar-none flex-col gap-3.5 overflow-auto rounded-t-[22px] pb-[max(28px,env(safe-area-inset-bottom))] outline-none",
+            "scrollbar-none flex max-h-[92dvh] w-full animate-sheet-in flex-col gap-3.5 overflow-auto rounded-t-[22px] bg-surface pb-[max(28px,env(safe-area-inset-bottom))] outline-none pc:rounded-[18px]",
             className,
           )}
           {...props}
@@ -32,11 +32,4 @@ function DialogContent({ className, children, ...props }: DialogContentProps) {
   );
 }
 
-export {
-  Dialog,
-  DialogTrigger,
-  DialogClose,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-};
+export { Dialog, DialogTrigger, DialogClose, DialogContent, DialogTitle, DialogDescription };

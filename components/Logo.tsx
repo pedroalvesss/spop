@@ -14,31 +14,12 @@ interface LogoSymbolProps {
 // Abaixo de ~32px o traço engrossa pra continuar legível (manual da marca, pág. 04).
 export function LogoSymbol({ size, bold = false }: LogoSymbolProps) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 48 48"
-      fill="none"
-      aria-hidden="true"
-    >
-      <circle
-        cx="22"
-        cy="26"
-        r="16"
-        stroke="#9184d9"
-        strokeWidth={bold ? 4 : 3.5}
-      />
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <circle cx="22" cy="26" r="16" stroke="#9184d9" strokeWidth={bold ? 4 : 3.5} />
       {bold ? (
         <rect x="20" y="16" width="4" height="12" rx="2" fill="#e9e9ed" />
       ) : (
-        <rect
-          x="20.25"
-          y="16"
-          width="3.5"
-          height="12"
-          rx="1.75"
-          fill="#e9e9ed"
-        />
+        <rect x="20.25" y="16" width="3.5" height="12" rx="1.75" fill="#e9e9ed" />
       )}
       <circle cx="22" cy="33.5" r={bold ? 2.4 : 2.2} fill="#e9e9ed" />
       <path
@@ -61,9 +42,7 @@ export function Logo({ size = "lg", className }: LogoProps) {
   return (
     <div className={cn("flex items-center", s.gap, className)}>
       <LogoSymbol size={s.symbol} bold={s.bold} />
-      <span
-        className={cn("leading-none font-semibold tracking-[-0.04em]", s.text)}
-      >
+      <span className={cn("leading-none font-semibold tracking-[-0.04em]", s.text)}>
         spop<span className="text-accent">!</span>
       </span>
     </div>

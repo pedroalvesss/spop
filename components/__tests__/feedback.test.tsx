@@ -28,9 +28,7 @@ describe("PasswordStrength", () => {
   it("fica accent quando a senha é boa", () => {
     render(<PasswordStrength password="abcd12345" />);
     expect(
-      screen
-        .getAllByTestId("password-bar")
-        .every((b) => b.classList.contains("bg-accent")),
+      screen.getAllByTestId("password-bar").every((b) => b.classList.contains("bg-accent")),
     ).toBe(true);
   });
 });
@@ -52,9 +50,7 @@ describe("Toast", () => {
       </ToastProvider>,
     );
     fireEvent.click(screen.getByRole("button"));
-    expect(screen.getByRole("status")).toHaveTextContent(
-      "Anotado. Doeu, mas tá registrado.",
-    );
+    expect(screen.getByRole("status")).toHaveTextContent("Anotado. Doeu, mas tá registrado.");
     act(() => {
       vi.advanceTimersByTime(2600);
     });

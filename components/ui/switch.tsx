@@ -10,7 +10,7 @@ function Switch({ className, ...props }: SwitchProps) {
   return (
     <SwitchPrimitive.Root
       className={cn(
-        "data-[state=checked]:bg-accent relative h-[26px] w-11 shrink-0 rounded-[13px] bg-neutral-800 transition-colors duration-200 disabled:opacity-45",
+        "relative h-[26px] w-11 shrink-0 rounded-[13px] bg-neutral-800 transition-colors duration-200 disabled:opacity-45 data-[state=checked]:bg-accent",
         className,
       )}
       {...props}

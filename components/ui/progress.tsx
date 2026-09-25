@@ -21,7 +21,7 @@ export function ProgressBar({ ratio, fillClassName = "bg-accent", className }: P
       aria-valuenow={Math.round(pct)}
       aria-valuemin={0}
       aria-valuemax={100}
-      className={cn("bg-bg h-1.5 overflow-hidden rounded-[3px]", className)}
+      className={cn("h-1.5 overflow-hidden rounded-[3px] bg-bg", className)}
     >
       <div className={cn("h-full rounded-[inherit]", fillClassName)} style={{ width: `${pct}%` }} />
     </div>

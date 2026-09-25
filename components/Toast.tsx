@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useRef, useState } from "react";
 import { CheckCircle } from "@phosphor-icons/react/ssr";
 
 const TOAST_MS = 2600;
@@ -18,9 +12,7 @@ interface ToastProviderProps {
 }
 
 export function ToastProvider({ children }: ToastProviderProps) {
-  const [toast, setToast] = useState<{ id: number; message: string } | null>(
-    null,
-  );
+  const [toast, setToast] = useState<{ id: number; message: string } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const showToast = useCallback((message: string) => {
@@ -36,12 +28,9 @@ export function ToastProvider({ children }: ToastProviderProps) {
         {toast && (
           <div
             key={toast.id}
-            className="animate-toast-in bg-surface fixed top-[calc(16px+env(safe-area-inset-top))] left-1/2 z-60 flex w-max max-w-[88%] -translate-x-1/2 items-center gap-2 rounded-xl px-3.5 py-2.5 text-[13px] shadow-md"
+            className="fixed top-[calc(16px+env(safe-area-inset-top))] left-1/2 z-60 flex w-max max-w-[88%] -translate-x-1/2 animate-toast-in items-center gap-2 rounded-xl bg-surface px-3.5 py-2.5 text-[13px] shadow-md"
           >
-            <CheckCircle
-              weight="fill"
-              className="text-accent shrink-0 text-base"
-            />
+            <CheckCircle weight="fill" className="shrink-0 text-base text-accent" />
             <span>{toast.message}</span>
           </div>
         )}

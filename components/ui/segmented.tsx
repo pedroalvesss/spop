@@ -72,7 +72,7 @@ export function Segmented<T extends string>({
     <div
       role="group"
       aria-label={label}
-      className={cn("bg-surface flex gap-0.5 rounded-[11px] p-[3px]", className)}
+      className={cn("flex gap-0.5 rounded-[11px] bg-surface p-[3px]", className)}
     >
       {options.map((option) => (
         <SegmentedItem

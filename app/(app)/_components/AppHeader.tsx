@@ -24,12 +24,12 @@ export function AppHeader({ userName, homeSub }: AppHeaderProps) {
   return (
     <header className="flex min-h-11 items-center gap-3">
       {isHome && (
-        <div className="pc:hidden flex-1">
+        <div className="flex-1 pc:hidden">
           <Logo size="sm" />
         </div>
       )}
-      <div className={cn("min-w-0 flex-1", isHome && "pc:block hidden")}>
-        <h1 className="pc:text-[28px] text-[30px] tracking-[-0.025em]">{title}</h1>
+      <div className={cn("min-w-0 flex-1", isHome && "hidden pc:block")}>
+        <h1 className="text-[30px] tracking-[-0.025em] pc:text-[28px]">{title}</h1>
         <div className="mt-0.5 text-[13px] text-neutral-500">{sub}</div>
       </div>
       <button
@@ -38,14 +38,14 @@ export function AppHeader({ userName, homeSub }: AppHeaderProps) {
         title="Ocultar valores"
         aria-label={hidden ? "Mostrar valores" : "Ocultar valores"}
         aria-pressed={hidden}
-        className="hover:bg-text/7 grid size-10 shrink-0 place-items-center rounded-full text-xl text-neutral-300 transition-colors"
+        className="grid size-10 shrink-0 place-items-center rounded-full text-xl text-neutral-300 transition-colors hover:bg-text/7"
       >
         {hidden ? <EyeSlash /> : <Eye />}
       </button>
       <Link
         href="/ajustes"
         aria-label="Ajustes"
-        className="bg-accent-800 text-accent-200 grid size-9 shrink-0 place-items-center rounded-full text-sm font-semibold"
+        className="grid size-9 shrink-0 place-items-center rounded-full bg-accent-800 text-sm font-semibold text-accent-200"
       >
         {userName.charAt(0).toUpperCase()}
       </Link>

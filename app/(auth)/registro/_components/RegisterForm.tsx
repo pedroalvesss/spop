@@ -38,11 +38,7 @@ export function RegisterForm() {
   }
 
   return (
-    <form
-      noValidate
-      onSubmit={handleSubmit(handleSubmitForm)}
-      className="flex flex-col gap-3.5"
-    >
+    <form noValidate onSubmit={handleSubmit(handleSubmitForm)} className="flex flex-col gap-3.5">
       <div>
         <Label htmlFor="name">Como te chamo?</Label>
         <Input
@@ -70,11 +66,7 @@ export function RegisterForm() {
         password={password}
       />
       <FormError message={error} />
-      <Button
-        type="submit"
-        disabled={formState.isSubmitting}
-        className={TALL_FIELD}
-      >
+      <Button type="submit" disabled={formState.isSubmitting} className={TALL_FIELD}>
         Começar a organizar
       </Button>
     </form>
