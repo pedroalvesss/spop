@@ -1,0 +1,232 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Dinheiro sempre em centavos (Int). Transação: positivo = entrada, negativo = saída.
+
+enum CategoryType {
+  expense
+  income
+}
+
+model User {
+  id                     String   @id @default(cuid())
+  name                   String
+  email                  String   @unique
+  passwordHash           String   @map("password_hash")
+  hideValuesOnOpen       Boolean  @default(false) @map("hide_values_on_open")
+  salaryDay              Int      @default(5) @map("salary_day")
+  billCreatesTransaction Boolean  @default(false) @map("bill_creates_transaction")
+  emailReminders         Boolean  @default(true) @map("email_reminders")
+  modules                String[] @default(["tx", "budget", "bills", "cards", "debts", "goals", "invest", "reports"])
+  createdAt              DateTime @default(now()) @map("created_at")
+
+  accounts            Account[]
+  categories          Category[]
+  transactions        Transaction[]
+  creditCards         CreditCard[]
+  bills               Bill[]
+  debts               Debt[]
+  goals               Goal[]
+  investments         Investment[]
+  pushSubscriptions   PushSubscription[]
+  passwordResetTokens PasswordResetToken[]
+
+  @@map("users")
+}
+
+model Account {
+  id                  String   @id @default(cuid())
+  userId              String   @map("user_id")
+  name                String
+  color               String
+  initialBalanceCents Int      @default(0) @map("initial_balance_cents")
+  active              Boolean  @default(true)
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  creditCards  CreditCard[]
+
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Category {
+  id                 String       @id @default(cuid())
+  userId             String       @map("user_id")
+  name               String
+  icon               String
+  type               CategoryType
+  monthlyBudgetCents Int?         @map("monthly_budget_cents")
+  active             Boolean      @default(true)
+  createdAt          DateTime     @default(now()) @map("created_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([userId])
+  @@map("categories")
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  accountId   String   @map("account_id")
+  categoryId  String   @map("category_id")
+  amountCents Int      @map("amount_cents")
+  description String
+  date        DateTime @db.Date
+  cardId      String?  @map("card_id")
+  debtId      String?  @map("debt_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account     Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  category    Category     @relation(fields: [categoryId], references: [id])
+  card        CreditCard?  @relation(fields: [cardId], references: [id], onDelete: SetNull)
+  debt        Debt?        @relation(fields: [debtId], references: [id], onDelete: SetNull)
+  billPayment BillPayment?
+
+  @@index([userId, date])
+  @@map("transactions")
+}
+
+model CreditCard {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  accountId  String   @map("account_id")
+  name       String
+  last4      String
+  limitCents Int      @map("limit_cents")
+  closingDay Int      @map("closing_day")
+  dueDay     Int      @map("due_day")
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account      Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  debts        Debt[]
+
+  @@index([userId])
+  @@map("credit_cards")
+}
+
+model Bill {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  name        String
+  icon        String
+  amountCents Int      @map("amount_cents")
+  dueDay      Int      @map("due_day")
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments BillPayment[]
+
+  @@index([userId])
+  @@map("bills")
+}
+
+model BillPayment {
+  id            String   @id @default(cuid())
+  billId        String   @map("bill_id")
+  month         String // YYYY-MM
+  paidAt        DateTime @default(now()) @map("paid_at")
+  transactionId String?  @unique @map("transaction_id")
+
+  bill        Bill         @relation(fields: [billId], references: [id], onDelete: Cascade)
+  transaction Transaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+
+  @@unique([billId, month])
+  @@map("bill_payments")
+}
+
+model Debt {
+  id                String   @id @default(cuid())
+  userId            String   @map("user_id")
+  name              String
+  subtitle          String
+  icon              String
+  installmentCents  Int      @map("installment_cents")
+  totalInstallments Int      @map("total_installments")
+  paidInstallments  Int      @default(0) @map("paid_installments")
+  // Preenchidos quando a dívida nasce de uma compra parcelada: pagar parcela gera a transação.
+  accountId         String?  @map("account_id")
+  categoryId        String?  @map("category_id")
+  cardId            String?  @map("card_id")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  card         CreditCard?   @relation(fields: [cardId], references: [id], onDelete: SetNull)
+  transactions Transaction[]
+
+  @@index([userId])
+  @@map("debts")
+}
+
+model Goal {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  name         String
+  icon         String
+  targetCents  Int      @map("target_cents")
+  currentCents Int      @default(0) @map("current_cents")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("goals")
+}
+
+model Investment {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  name        String
+  subtitle    String
+  amountCents Int      @map("amount_cents")
+  // Valor no início do mês de referência, pra calcular o rendimento do mês sem guardar histórico.
+  baseCents   Int      @map("base_cents")
+  baseMonth   String   @map("base_month") // YYYY-MM
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("investments")
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("push_subscriptions")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  tokenHash String   @unique @map("token_hash")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
+}
