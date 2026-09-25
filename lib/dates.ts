@@ -82,6 +82,10 @@ export function dateInMonth(month: string, day: number) {
   return `${month}-${String(Math.min(day, daysInMonth(y, m))).padStart(2, "0")}`;
 }
 
+export function addDays(iso: string, n: number) {
+  return toISO(new Date(fromISO(iso).getTime() + n * DAY_MS));
+}
+
 export function diffDays(from: string, to: string) {
   return Math.round((fromISO(to).getTime() - fromISO(from).getTime()) / DAY_MS);
 }

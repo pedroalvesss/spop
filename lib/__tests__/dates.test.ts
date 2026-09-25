@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  addDays,
   addMonths,
   dateInMonth,
   dayLabel,
@@ -59,5 +60,12 @@ describe("dates", () => {
   it("conta os dias que sobram no mês", () => {
     expect(daysLeftInMonth("2026-09-24")).toBe(6);
     expect(daysLeftInMonth("2026-09-30")).toBe(1);
+  });
+});
+
+describe("addDays", () => {
+  it("atravessa mês e ano", () => {
+    expect(addDays("2026-09-25", -30)).toBe("2026-08-26");
+    expect(addDays("2026-12-31", 1)).toBe("2027-01-01");
   });
 });
