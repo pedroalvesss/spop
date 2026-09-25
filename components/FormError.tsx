@@ -1,0 +1,18 @@
+import { WarningCircle } from "@phosphor-icons/react/ssr";
+
+interface FormErrorProps {
+  message?: string;
+}
+
+export function FormError({ message }: FormErrorProps) {
+  if (!message) return null;
+  return (
+    <div
+      role="alert"
+      className="text-expense flex items-center gap-1.5 text-[13px]"
+    >
+      <WarningCircle className="shrink-0" />
+      {message}
+    </div>
+  );
+}

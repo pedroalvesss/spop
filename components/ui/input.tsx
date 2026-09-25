@@ -17,3 +17,6 @@ function Select({ className, ...props }: SelectProps) {
 }
 
 export { Input, Select, inputClassName };
+
+// Campos e CTAs das telas de entrada: 46px de altura, raio 12, texto 15.
+export const TALL_FIELD = "min-h-[46px] rounded-xl text-[15px]";
