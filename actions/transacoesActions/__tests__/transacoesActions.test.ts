@@ -20,6 +20,13 @@ const { db, tx } = vi.hoisted(() => {
 vi.mock("@/lib/db", () => ({ db }));
 vi.mock("@/lib/session", () => ({ getUserId: async () => "u1" }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
+const { notifyBudgetAlert } = vi.hoisted(() => ({ notifyBudgetAlert: vi.fn() }));
+vi.mock("@/lib/budgetNotifier", () => ({ notifyBudgetAlert }));
+vi.mock("next/server", () => ({ after: (fn: () => unknown) => fn() }));
+vi.mock("@/lib/dates", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/dates")>()),
+  todayISO: () => "2026-09-24",
+}));
 
 const input = {
   type: "out" as const,
@@ -86,6 +93,16 @@ describe("postTransaction", () => {
       amountCents: -40000,
       debtId: "d1",
     });
+  });
+
+  it("saída do mês atual confere o orçamento depois da resposta", async () => {
+    await postTransaction(input);
+    expect(notifyBudgetAlert).toHaveBeenCalledWith("u1", "cat", "2026-09", 10000);
+  });
+
+  it("saída de mês passado não gera alerta", async () => {
+    await postTransaction({ ...input, date: "2026-08-10" });
+    expect(notifyBudgetAlert).not.toHaveBeenCalled();
   });
 
   it("entrada ignora parcelas", async () => {

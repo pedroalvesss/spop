@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/services/usuariosService/getCurrentUser";
 import { AccountsCard } from "./_components/AccountsCard";
 import { CategoriesCard } from "./_components/CategoriesCard";
 import { ModulesCard } from "./_components/ModulesCard";
+import { NotificationsCard } from "./_components/NotificationsCard";
 import { PreferencesCard } from "./_components/PreferencesCard";
 
 export const metadata: Metadata = { title: "Ajustes · SPOP!" };
@@ -42,6 +43,7 @@ export default async function SettingsPage() {
       </div>
       <div className="flex flex-col gap-3.5">
         <ModulesCard modules={user.modules} />
+        <NotificationsCard emailReminders={user.emailReminders} />
         <PreferencesCard
           hideValuesOnOpen={user.hideValuesOnOpen}
           billCreatesTransaction={user.billCreatesTransaction}

@@ -1,8 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+import { notifyBudgetAlert } from "@/lib/budgetNotifier";
 import { db } from "@/lib/db";
-import { fromISO } from "@/lib/dates";
+import { fromISO, monthKey, todayISO } from "@/lib/dates";
 import { parseBRL } from "@/lib/money";
 import { getUserId } from "@/lib/session";
 import {
@@ -60,6 +62,13 @@ export async function postTransaction(input: TransactionInput): Promise<ActionRe
         },
       });
     });
+  }
+
+  // Alerta de orçamento só vale pro mês corrente, e sai depois da resposta pra não atrasar o modal.
+  const month = monthKey(data.date);
+  if (data.type === "out" && month === monthKey(todayISO())) {
+    const spent = installments === 1 ? total : installmentCents(total, installments);
+    after(() => notifyBudgetAlert(userId, refs.categoryId, month, spent));
   }
 
   revalidatePath("/", "layout");
