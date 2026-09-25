@@ -33,5 +33,17 @@ export type PreferencesInput = z.input<typeof preferencesSchema>;
 export const moduleSchema = z.object({ module: z.enum(MODULE_IDS), enabled: z.boolean() });
 export type ModuleInput = z.input<typeof moduleSchema>;
 
+export const bankConnectionSchema = z.object({
+  itemId: z
+    .string()
+    .trim()
+    .pipe(z.uuid("Esse Item ID não parece certo. Copia de novo no dashboard da Pluggy.")),
+  accountId: z.string().min(1, "Escolhe a conta que recebe o extrato."),
+  // Vazio = não importa o cartão.
+  cardId: z.string(),
+  since: z.iso.date("Data inválida."),
+});
+export type BankConnectionInput = z.input<typeof bankConnectionSchema>;
+
 // Cores de conta nova: só tons da marca (verde e vermelho são dos números).
 export const ACCOUNT_COLORS = ["#9184d9", "#9397ab", "#d2cefd", "#e0a458", "#796cbf", "#cfd3e5"];
