@@ -52,6 +52,7 @@ model Account {
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   transactions Transaction[]
   creditCards  CreditCard[]
+  bills        Bill[]
 
   @@index([userId])
   @@map("accounts")
@@ -69,6 +70,7 @@ model Category {
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   transactions Transaction[]
+  bills        Bill[]
 
   @@index([userId])
   @@map("categories")
@@ -125,10 +127,15 @@ model Bill {
   icon        String
   amountCents Int      @map("amount_cents")
   dueDay      Int      @map("due_day")
+  // Usados quando marcar como paga cria o lançamento automaticamente.
+  categoryId  String?  @map("category_id")
+  accountId   String?  @map("account_id")
   active      Boolean  @default(true)
   createdAt   DateTime @default(now()) @map("created_at")
 
   user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  account  Account?      @relation(fields: [accountId], references: [id], onDelete: SetNull)
   payments BillPayment[]
 
   @@index([userId])

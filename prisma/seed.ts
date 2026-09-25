@@ -157,14 +157,14 @@ async function main() {
   });
 
   const bills = [
-    ["Aluguel", "house-line", 1400, 5, true],
-    ["Luz", "lightning", 128.4, 12, true],
-    ["Internet", "wifi-high", 99.9, 26, false],
-    ["Spotify", "music-notes", 21.9, 27, false],
-    ["Academia (que eu vou, juro)", "barbell", 89.9, 30, false],
-    ["Celular", "device-mobile", 55, 28, false],
+    ["Aluguel", "house-line", 1400, 5, true, "Moradia"],
+    ["Luz", "lightning", 128.4, 12, true, "Moradia"],
+    ["Internet", "wifi-high", 99.9, 26, false, "Moradia"],
+    ["Spotify", "music-notes", 21.9, 27, false, "Assinaturas"],
+    ["Academia (que eu vou, juro)", "barbell", 89.9, 30, false, "Saúde"],
+    ["Celular", "device-mobile", 55, 28, false, "Assinaturas"],
   ] as const;
-  for (const [name, icon, value, dueDay, paid] of bills) {
+  for (const [name, icon, value, dueDay, paid, category] of bills) {
     await db.bill.create({
       data: {
         userId,
@@ -172,6 +172,8 @@ async function main() {
         icon,
         amountCents: cents(value),
         dueDay,
+        categoryId: cat(category),
+        accountId: nu.id,
         payments: paid ? { create: { month } } : undefined,
       },
     });
