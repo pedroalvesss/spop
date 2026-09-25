@@ -18,6 +18,7 @@
 - **Relatórios:** entrou × saiu em 3, 6 ou 12 meses, média, mês mais salgado e gastos por categoria.
 - **Ajustes:** liga e desliga abas, bancos e carteiras, categorias, dia do salário, notificações e "esconder valores ao abrir".
 - **Olho no header:** esconde todo valor em dinheiro do app.
+- **Banco conectado (Open Finance):** liga o Nubank (ou outro banco) pelo Meu Pluggy e o extrato e as compras no cartão entram sozinhos. Sincroniza ao abrir o app (no máximo 1x por hora) e no cron diário, sem duplicar e sem importar pagamento de fatura ou caixinha.
 - **Notificações:** push (Web Push/VAPID) quando uma conta vence e quando uma categoria passa de 85% ou 100% do orçamento. Lembrete diário por e-mail (Resend) via Vercel Cron.
 
 ## Stack
@@ -80,6 +81,7 @@ Veja [`.env.example`](.env.example). Em produção:
 - `RESEND_API_KEY` e `EMAIL_FROM`: domínio verificado no Resend
 - `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` e `VAPID_SUBJECT`: `npx web-push generate-vapid-keys`
 - `CRON_SECRET`: a Vercel envia no header do cron
+- `PLUGGY_CLIENT_ID` e `PLUGGY_CLIENT_SECRET` (opcionais): aplicação no [dashboard da Pluggy](https://dashboard.pluggy.ai). Com o banco ligado no [Meu Pluggy](https://meu.pluggy.ai), o Item ID vai em Ajustes → Banco conectado
 
 ## Deploy
 
