@@ -3,6 +3,7 @@ import { pickCategory, toImported } from "@/lib/bankImport";
 import { notifyBudgetAlert } from "@/lib/budgetNotifier";
 import { db } from "@/lib/db";
 import { addDays, fromISO, monthKey, toISO, todayISO } from "@/lib/dates";
+import { pluggyEnabled } from "@/lib/pluggy";
 import { getPluggyAccounts } from "@/services/pluggyService/getPluggyAccounts";
 import { getPluggyTransactions } from "@/services/pluggyService/getPluggyTransactions";
 
@@ -103,6 +104,7 @@ export async function syncBankConnection(userId: string) {
 
 // Abrir o app puxa o que tiver de novo, no máximo uma vez por hora.
 export async function syncBankIfStale(userId: string) {
+  if (!pluggyEnabled()) return;
   const stale = await db.bankConnection.findFirst({
     where: {
       userId,
@@ -116,4 +118,11 @@ export async function syncBankIfStale(userId: string) {
   } catch (error) {
     console.error("[banco] sincronização falhou", error);
   }
+}
+
+// Cron diário: garante que o banco entra mesmo se ninguém abrir o app.
+export async function syncAllBanks() {
+  const connections = await db.bankConnection.findMany({ select: { userId: true } });
+  for (const { userId } of connections) await syncBankIfStale(userId);
+  return connections.length;
 }

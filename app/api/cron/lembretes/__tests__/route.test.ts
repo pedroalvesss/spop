@@ -5,12 +5,14 @@ const mocks = vi.hoisted(() => ({
   getBillReminders: vi.fn(),
   sendPushToUser: vi.fn(),
   sendEmail: vi.fn(),
+  syncAllBanks: vi.fn(),
 }));
 vi.mock("@/services/notificacoesService/getBillReminders", () => ({
   getBillReminders: mocks.getBillReminders,
 }));
 vi.mock("@/lib/push", () => ({ sendPushToUser: mocks.sendPushToUser }));
 vi.mock("@/lib/email", () => ({ sendEmail: mocks.sendEmail }));
+vi.mock("@/lib/bankSync", () => ({ syncAllBanks: mocks.syncAllBanks }));
 vi.mock("@/lib/dates", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/dates")>()),
   todayISO: () => "2026-09-24",
@@ -52,8 +54,9 @@ describe("cron de lembretes", () => {
       { userId: "u1", name: "Pedro", email: "p@e.com", emailReminders: true, bills: [internet] },
       { userId: "u2", name: "Ana", email: "a@e.com", emailReminders: false, bills: [internet] },
     ]);
+    mocks.syncAllBanks.mockResolvedValue(1);
     const response = await GET(request("segredo"));
-    expect(await response.json()).toEqual({ people: 2 });
+    expect(await response.json()).toEqual({ people: 2, banks: 1 });
     expect(mocks.getBillReminders).toHaveBeenCalledWith("2026-09-24");
     expect(mocks.sendPushToUser).toHaveBeenCalledWith(
       "u1",

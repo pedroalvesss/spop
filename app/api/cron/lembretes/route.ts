@@ -1,4 +1,5 @@
 import { billReminderEmail } from "@/emails/billReminderEmail";
+import { syncAllBanks } from "@/lib/bankSync";
 import { todayISO } from "@/lib/dates";
 import { sendEmail } from "@/lib/email";
 import { billPush } from "@/lib/notifications";
@@ -25,5 +26,7 @@ export async function GET(request: Request) {
     }),
   );
 
-  return Response.json({ people: reminders.length });
+  const banks = await syncAllBanks();
+
+  return Response.json({ people: reminders.length, banks });
 }

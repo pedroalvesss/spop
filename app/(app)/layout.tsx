@@ -1,5 +1,8 @@
+import { after } from "next/server";
 import { HideValuesProvider } from "@/components/HideValues";
+import { syncBankIfStale } from "@/lib/bankSync";
 import { daysUntilDay, longDate, salaryLine, todayISO } from "@/lib/dates";
+import { getUserId } from "@/lib/session";
 import { getActiveAccounts } from "@/services/bancosService/getActiveAccounts";
 import { getActiveCards } from "@/services/cartoesService/getActiveCards";
 import { getActiveCategories } from "@/services/categoriasService/getActiveCategories";
@@ -16,6 +19,9 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
     getActiveCategories(),
     getActiveCards(),
   ]);
+  // Abrir o app puxa o que o banco tiver de novo, depois da resposta.
+  const userId = await getUserId();
+  after(() => syncBankIfStale(userId));
   const today = todayISO();
   const salary = salaryLine(daysUntilDay(today, user.salaryDay));
   const homeSub = `${longDate(today)} · ${salary.charAt(0).toLowerCase()}${salary.slice(1)}`;
