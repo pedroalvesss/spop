@@ -5,6 +5,8 @@ import { pluggyGet } from "@/lib/pluggy";
 interface PluggyAccount {
   id: string;
   type: PluggyAccountType;
+  // Conta corrente: saldo disponível, sem o que está nas caixinhas.
+  balance: number;
 }
 
 export async function getPluggyAccounts(itemId: string) {

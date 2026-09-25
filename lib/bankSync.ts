@@ -87,6 +87,21 @@ export async function syncBankConnection(userId: string) {
     db.bankConnection.update({ where: { userId }, data: { syncedAt: new Date() } }),
   ]);
 
+  // Saldo igual ao do app do banco. Caixinha, fatura e limite convertido não viram lançamento,
+  // mas mexem no saldo; o saldo inicial absorve a diferença (mesma conta do "Saldo hoje").
+  const bankAccounts = accounts.filter((a) => a.type === "BANK");
+  if (bankAccounts.length) {
+    const balanceCents = Math.round(bankAccounts.reduce((sum, a) => sum + a.balance, 0) * 100);
+    const sum = await db.transaction.aggregate({
+      where: { userId, accountId: connection.accountId },
+      _sum: { amountCents: true },
+    });
+    await db.account.updateMany({
+      where: { id: connection.accountId, userId },
+      data: { initialBalanceCents: balanceCents - (sum._sum.amountCents ?? 0) },
+    });
+  }
+
   // Gasto novo do mês pode estourar orçamento: mesmo aviso de quando lança à mão.
   const month = monthKey(today);
   const spentByCategory = new Map<string, number>();

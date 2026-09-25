@@ -10,7 +10,9 @@ const { db, pluggy, notifyBudgetAlert } = vi.hoisted(() => ({
       createMany: vi.fn(),
       update: vi.fn(),
       deleteMany: vi.fn(),
+      aggregate: vi.fn(),
     },
+    account: { updateMany: vi.fn() },
     $transaction: vi.fn(),
   },
   pluggy: { accounts: vi.fn(), transactions: vi.fn() },
@@ -44,9 +46,10 @@ beforeEach(() => {
     { id: "pix", name: "Pix recebido", type: "income" },
   ]);
   pluggy.accounts.mockResolvedValue([
-    { id: "conta", type: "BANK" },
-    { id: "cartao", type: "CREDIT" },
+    { id: "conta", type: "BANK", balance: 1234.56 },
+    { id: "cartao", type: "CREDIT", balance: 800 },
   ]);
+  db.transaction.aggregate.mockResolvedValue({ _sum: { amountCents: -10000 } });
   pluggy.transactions.mockImplementation(async (id: string) =>
     id === "conta"
       ? [
@@ -94,6 +97,14 @@ describe("syncBankConnection", () => {
     await syncBankConnection("u1");
     expect(pluggy.transactions).toHaveBeenCalledWith("conta", "2026-09-01");
     expect(notifyBudgetAlert).toHaveBeenCalledWith("u1", "comer", "2026-09", 4290);
+  });
+
+  it("ajusta o saldo inicial pra conta fechar com o saldo do banco", async () => {
+    await syncBankConnection("u1");
+    expect(db.account.updateMany).toHaveBeenCalledWith({
+      where: { id: "nu", userId: "u1" },
+      data: { initialBalanceCents: 123456 + 10000 },
+    });
   });
 
   it("sem cartão ligado, ignora a conta de crédito", async () => {
