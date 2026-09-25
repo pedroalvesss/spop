@@ -36,6 +36,7 @@ model User {
   investments         Investment[]
   pushSubscriptions   PushSubscription[]
   passwordResetTokens PasswordResetToken[]
+  bankConnection      BankConnection?
 
   @@map("users")
 }
@@ -53,6 +54,7 @@ model Account {
   transactions Transaction[]
   creditCards  CreditCard[]
   bills        Bill[]
+  connections  BankConnection[]
 
   @@index([userId])
   @@map("accounts")
@@ -86,6 +88,8 @@ model Transaction {
   date        DateTime @db.Date
   cardId      String?  @map("card_id")
   debtId      String?  @map("debt_id")
+  // ID da transação na Pluggy quando veio do banco. Garante que cada uma entra uma vez só.
+  externalId  String?  @map("external_id")
   createdAt   DateTime @default(now()) @map("created_at")
 
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -95,6 +99,7 @@ model Transaction {
   debt        Debt?        @relation(fields: [debtId], references: [id], onDelete: SetNull)
   billPayment BillPayment?
 
+  @@unique([userId, externalId])
   @@index([userId, date])
   @@map("transactions")
 }
@@ -115,6 +120,7 @@ model CreditCard {
   account      Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
   transactions Transaction[]
   debts        Debt[]
+  connections  BankConnection[]
 
   @@index([userId])
   @@map("credit_cards")
@@ -210,6 +216,27 @@ model Investment {
 
   @@index([userId])
   @@map("investments")
+}
+
+// Banco ligado pelo Open Finance (Meu Pluggy). Conta corrente cai em accountId, cartão em cardId.
+// ponytail: um banco por pessoa; vira lista quando precisar ligar mais de um.
+model BankConnection {
+  id        String    @id @default(cuid())
+  userId    String    @unique @map("user_id")
+  itemId    String    @unique @map("item_id")
+  bankName  String    @map("bank_name")
+  accountId String    @map("account_id")
+  cardId    String?   @map("card_id")
+  // Só importa daqui pra frente, pra não duplicar o que já foi lançado à mão.
+  since     DateTime  @db.Date
+  syncedAt  DateTime? @map("synced_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account Account     @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  card    CreditCard? @relation(fields: [cardId], references: [id], onDelete: SetNull)
+
+  @@map("bank_connections")
 }
 
 model PushSubscription {
