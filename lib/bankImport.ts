@@ -21,11 +21,18 @@ export interface ImportedTransaction {
   hint: string;
 }
 
-// Não é gasto nem ganho de verdade: pagar a fatura (as compras já contaram no cartão) e dinheiro
-// indo e voltando das caixinhas.
+// Não é gasto nem ganho de verdade: pagar a fatura (as compras já contaram no cartão), dinheiro
+// indo e voltando das caixinhas e limite do cartão virando saldo (o gasto conta quando sai da conta).
 // ponytail: lista de palavras; ajustar quando entrar algo que não devia.
 const SKIP =
-  /pagamento de fatura|pagamento recebido|credit card payment|aplica[cç][aã]o|resgate|\brdb\b|caixinha|same person/i;
+  /pagamento de fatura|pagamento recebido|credit card payment|aplica[cç][aã]o|resgate|\brdb\b|caixinha|same person|cr[eé]dito em conta|limite convertido/i;
+
+// O Nubank manda "Compra no débito|BURGER KING": fica só o nome, sem gritar.
+function cleanDescription(raw: string) {
+  const name = raw.split("|").pop()!.trim() || raw.trim();
+  if (name !== name.toUpperCase()) return name;
+  return name.toLowerCase().replace(/(^|[\s*.-])(\p{L})/gu, (_, sep, c) => sep + c.toUpperCase());
+}
 
 export function toImported(
   t: PluggyTransaction,
@@ -46,7 +53,7 @@ export function toImported(
       : "";
   return {
     externalId: t.id,
-    description: `${t.description.trim()}${installment}`.slice(0, 120),
+    description: `${cleanDescription(t.description)}${installment}`.slice(0, 120),
     amountCents: cents,
     // A Pluggy manda UTC; o dia que vale é o de São Paulo.
     date: todayISO(new Date(t.date)),
@@ -57,8 +64,14 @@ export function toImported(
 // Categoria da Pluggy (em inglês) ou nome do estabelecimento → categoria padrão do SPOP.
 const CATEGORY_RULES: [RegExp, string][] = [
   [/groceries|supermarket|supermerc|carrefour|assa[ií]|atacad|hortifruti/i, "Mercado"],
-  [/food|eating|restaurant|delivery|bakery|ifood|rappi|padaria|lanchonete/i, "Comer fora"],
-  [/transport|taxi|ride|gas station|fuel|parking|toll|mobility|uber|\b99|posto/i, "Transporte"],
+  [
+    /food|eating|restaurant|delivery|bakery|ifood|rappi|padaria|lanch|burger|pizz|sushi|\bbar\b/i,
+    "Comer fora",
+  ],
+  [
+    /transport|automotive|taxi|ride|gas station|fuel|parking|toll|mobility|uber|\b99|posto/i,
+    "Transporte",
+  ],
   [
     /streaming|subscription|digital service|netflix|spotify|prime video|disney|youtube/i,
     "Assinaturas",

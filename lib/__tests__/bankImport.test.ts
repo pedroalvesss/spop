@@ -43,6 +43,19 @@ describe("toImported", () => {
     expect(toImported(t, "CREDIT")?.amountCents).toBe(-5530);
   });
 
+  it("limpa a descrição do Nubank", () => {
+    const debit = tx({ description: "Compra no débito|BURGER KING" });
+    expect(toImported(debit, "BANK")?.description).toBe("Burger King");
+    const card = tx({ description: "Ifd*Hamburgueria Comer", amount: 33.49 });
+    expect(toImported(card, "CREDIT")?.description).toBe("Ifd*Hamburgueria Comer");
+  });
+
+  it("ignora limite convertido em saldo e o crédito que ele gera na conta", () => {
+    const limit = tx({ description: "Limite convertido em saldo na sua conta do Nubank" });
+    expect(toImported({ ...limit, amount: 5.34 }, "CREDIT")).toBeNull();
+    expect(toImported(tx({ description: "Crédito em conta", amount: 2000 }), "BANK")).toBeNull();
+  });
+
   it("ignora pagamento de fatura, caixinha e estorno no cartão", () => {
     expect(toImported(tx({ description: "Pagamento de fatura" }), "BANK")).toBeNull();
     expect(toImported(tx({ description: "Aplicação RDB" }), "BANK")).toBeNull();
@@ -57,6 +70,9 @@ describe("pickCategory", () => {
       "mercado",
     );
     expect(pickCategory({ hint: " IFOOD *IFOOD", amountCents: -1 }, categories)).toBe("comer");
+    expect(pickCategory({ hint: "Shopping BAR MEU GAROTO", amountCents: -1 }, categories)).toBe(
+      "comer",
+    );
     expect(pickCategory({ hint: "Salary Empresa", amountCents: 1 }, categories)).toBe("salario");
   });
 
