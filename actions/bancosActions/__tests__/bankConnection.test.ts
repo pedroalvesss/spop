@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { postBankConnection } from "../postBankConnection";
 import { postBankSync } from "../postBankSync";
+import { postConnectToken } from "../postConnectToken";
 
-const { db, getPluggyItem, syncBankConnection } = vi.hoisted(() => ({
+const { db, getPluggyItem, syncBankConnection, pluggyPost } = vi.hoisted(() => ({
+  pluggyPost: vi.fn(),
   db: {
     account: { findFirst: vi.fn() },
     creditCard: { findFirst: vi.fn() },
@@ -13,7 +15,7 @@ const { db, getPluggyItem, syncBankConnection } = vi.hoisted(() => ({
 }));
 vi.mock("@/lib/db", () => ({ db }));
 vi.mock("@/lib/session", () => ({ getUserId: async () => "u1" }));
-vi.mock("@/lib/pluggy", () => ({ pluggyEnabled: () => true }));
+vi.mock("@/lib/pluggy", () => ({ pluggyEnabled: () => true, pluggyPost }));
 vi.mock("@/lib/bankSync", () => ({ syncBankConnection }));
 vi.mock("@/services/pluggyService/getPluggyItem", () => ({ getPluggyItem }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
@@ -75,5 +77,15 @@ describe("postBankSync", () => {
     syncBankConnection.mockRejectedValue(new Error("500"));
     vi.spyOn(console, "error").mockImplementation(() => {});
     expect(await postBankSync()).toMatchObject({ ok: false });
+  });
+});
+
+describe("postConnectToken", () => {
+  it("pede o token com o id da pessoa, nunca o e-mail", async () => {
+    pluggyPost.mockResolvedValue({ accessToken: "tok" });
+    expect(await postConnectToken()).toEqual({ ok: true, token: "tok" });
+    expect(pluggyPost).toHaveBeenCalledWith("/connect_token", {
+      options: { clientUserId: "u1", avoidDuplicates: true },
+    });
   });
 });

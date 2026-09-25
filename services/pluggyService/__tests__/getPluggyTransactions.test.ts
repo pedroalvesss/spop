@@ -20,7 +20,7 @@ describe("getPluggyTransactions", () => {
     expect(fetch.mock.calls[1][0]).toBe(
       "https://api.pluggy.ai/v2/transactions?accountId=acc&dateFrom=2026-09-01",
     );
-    expect(fetch.mock.calls[1][1].headers).toEqual({ "X-API-KEY": "k" });
+    expect(fetch.mock.calls[1][1].headers).toMatchObject({ "X-API-KEY": "k" });
     expect(fetch.mock.calls[2][0]).toBe(
       "https://api.pluggy.ai/v2/transactions?accountId=acc&after=X",
     );

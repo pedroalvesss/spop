@@ -24,6 +24,8 @@ interface BankConnectionFormProps {
   accounts: Option[];
   cards: Option[];
   today: string;
+  // Vem preenchido quando a autorização foi pelo widget do Meu Pluggy.
+  itemId?: string;
   onOpenChange: (open: boolean) => void;
 }
 
@@ -32,13 +34,14 @@ export function BankConnectionForm({
   accounts,
   cards,
   today,
+  itemId,
   onOpenChange,
 }: BankConnectionFormProps) {
   const toast = useToast();
   const form = useForm<BankConnectionInput>({
     resolver: zodResolver(bankConnectionSchema),
     defaultValues: {
-      itemId: connection?.itemId ?? "",
+      itemId: itemId || connection?.itemId || "",
       accountId: connection?.accountId ?? accounts[0]?.id ?? "",
       cardId: connection ? (connection.cardId ?? "") : (cards[0]?.id ?? ""),
       since: connection?.since ?? today,
@@ -102,8 +105,10 @@ export function BankConnectionForm({
         <Input id="bank-since" type="date" className={FIELD} {...form.register("since")} />
       </div>
       <p className="text-xs text-pretty text-neutral-500">
-        O Item ID fica no dashboard da Pluggy, no app de demonstração, depois de ligar o banco no
-        Meu Pluggy. Antes da data escolhida nada entra, pra não duplicar o que você já lançou.
+        {itemId
+          ? "Autorizado no Meu Pluggy. Confere a conta e o cartão e toca em Conectar."
+          : "O Item ID fica no dashboard da Pluggy (Demo → ⋮ → Copy Item ID)."}{" "}
+        Antes da data escolhida nada entra, pra não duplicar o que você já lançou.
       </p>
     </FormSheet>
   );

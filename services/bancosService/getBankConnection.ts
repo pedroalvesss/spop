@@ -5,7 +5,7 @@ import { toISO } from "@/lib/dates";
 import { getUserId } from "@/lib/session";
 
 export interface BankConnectionView {
-  bankName: string;
+  title: string;
   itemId: string;
   accountId: string;
   cardId: string | null;
@@ -29,11 +29,12 @@ export async function getBankConnection(): Promise<BankConnectionView | null> {
     },
   });
   if (!connection) return null;
-  const { account, card, since, syncedAt, ...rest } = connection;
+  const { account, card, since, syncedAt, bankName, ...rest } = connection;
   return {
     ...rest,
     since: toISO(since),
-    summary: card ? `${account.name} · cartão ${card.name}` : account.name,
+    title: account.name,
+    summary: card ? `via ${bankName} · cartão ${card.name}` : `via ${bankName}`,
     synced: syncedLabel(syncedAt),
   };
 }

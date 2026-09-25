@@ -8,6 +8,7 @@ import { ListRow } from "@/components/ListRow";
 import { useToast } from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import type { BankConnectionView } from "@/services/bancosService/getBankConnection";
+import { usePluggyConnect } from "../_hooks/usePluggyConnect";
 import { BankConnectionForm } from "./BankConnectionForm";
 import { importedMessage } from "./bankMessages";
 import { SettingsCard } from "./SettingsCard";
@@ -31,11 +32,21 @@ export function BankConnectionCard({
   today,
 }: BankConnectionCardProps) {
   const toast = useToast();
-  const [editing, setEditing] = useState(false);
+  // null = formulário fechado; "" = digitar o Item ID; id = veio do widget.
+  const [formItemId, setFormItemId] = useState<string | null>(null);
   const [syncing, startSync] = useTransition();
+  const pluggy = usePluggyConnect({ onItem: setFormItemId, onError: toast });
 
-  function handleClickEditButton() {
-    setEditing(true);
+  function handleClickPluggyButton() {
+    pluggy.open();
+  }
+
+  function handleClickManualButton() {
+    setFormItemId("");
+  }
+
+  function handleOpenChangeForm(open: boolean) {
+    if (!open) setFormItemId(null);
   }
 
   function handleClickSyncButton() {
@@ -59,9 +70,9 @@ export function BankConnectionCard({
         <>
           <ListRow
             icon="bank"
-            title={connection.bankName}
+            title={connection.title}
             meta={`${connection.summary} · ${connection.synced}`}
-            onClick={handleClickEditButton}
+            onClick={handleClickManualButton}
           />
           <div className="flex items-center justify-between">
             <Button
@@ -76,17 +87,32 @@ export function BankConnectionCard({
           </div>
         </>
       ) : (
-        <Button variant="ghost" className="self-start text-[13px]" onClick={handleClickEditButton}>
-          Conectar banco
-        </Button>
+        <div className="flex flex-wrap items-center gap-x-4">
+          <Button
+            variant="ghost"
+            className="text-[13px]"
+            disabled={pluggy.opening}
+            onClick={handleClickPluggyButton}
+          >
+            {pluggy.opening ? "Abrindo…" : "Conectar pelo Meu Pluggy"}
+          </Button>
+          <Button
+            variant="ghost"
+            className="text-[13px] text-neutral-400"
+            onClick={handleClickManualButton}
+          >
+            Colar Item ID
+          </Button>
+        </div>
       )}
-      {editing && (
+      {formItemId !== null && (
         <BankConnectionForm
           connection={connection}
           accounts={accounts}
           cards={cards}
           today={today}
-          onOpenChange={setEditing}
+          itemId={formItemId}
+          onOpenChange={handleOpenChangeForm}
         />
       )}
     </SettingsCard>

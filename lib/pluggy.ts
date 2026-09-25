@@ -26,13 +26,23 @@ async function apiKey() {
   return value;
 }
 
-// GET autenticado. 404 vira null; qualquer outro erro sobe.
-export async function pluggyGet<T>(path: string): Promise<T | null> {
+// Chamada autenticada. 404 vira null; qualquer outro erro sobe.
+async function pluggyFetch<T>(path: string, body?: unknown): Promise<T | null> {
   const res = await fetch(`${API}${path}`, {
-    headers: { "X-API-KEY": await apiKey() },
+    method: body ? "POST" : "GET",
+    headers: { "X-API-KEY": await apiKey(), "Content-Type": "application/json" },
+    body: body ? JSON.stringify(body) : undefined,
     cache: "no-store",
   });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`Pluggy ${path} respondeu ${res.status}`);
   return (await res.json()) as T;
+}
+
+export function pluggyGet<T>(path: string) {
+  return pluggyFetch<T>(path);
+}
+
+export function pluggyPost<T>(path: string, body: unknown) {
+  return pluggyFetch<T>(path, body);
 }
